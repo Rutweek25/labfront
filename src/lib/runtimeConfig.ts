@@ -1,4 +1,3 @@
-const isProduction = import.meta.env.PROD;
 const DEFAULT_API_URL = "https://labback-wz5w.onrender.com/api";
 const DEFAULT_SOCKET_URL = "https://labback-wz5w.onrender.com";
 
