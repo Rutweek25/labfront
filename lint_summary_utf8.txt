@@ -1,0 +1,28 @@
+
+File: C:\Users\Dell\OneDrive\Desktop\labroatory\frontend\src\pages\LabDashboard.tsx
+  Line 70: React Hook useEffect has a missing dependency: 'fetchLabData'. Either include it or remove the dependency array. [react-hooks/exhaustive-deps]
+  Line 97: React Hook useEffect has a missing dependency: 'fetchLabData'. Either include it or remove the dependency array. [react-hooks/exhaustive-deps]
+
+File: C:\Users\Dell\OneDrive\Desktop\labroatory\frontend\src\pages\admin\AdminPaymentsPage.tsx
+  Line 23: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array. [react-hooks/exhaustive-deps]
+
+File: C:\Users\Dell\OneDrive\Desktop\labroatory\frontend\src\pages\admin\AdminReportsPage.tsx
+  Line 24: React Hook useEffect has missing dependencies: 'load' and 'status'. Either include them or remove the dependency array. [react-hooks/exhaustive-deps]
+
+File: C:\Users\Dell\OneDrive\Desktop\labroatory\frontend\src\pages\admin\AdminSettingsPage.tsx
+  Line 23: Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\Dell\OneDrive\Desktop\labroatory\frontend\src\pages\admin\AdminSettingsPage.tsx:23:7
+  21 |   useEffect(() => {
+  22 |     if (settings) {
+> 23 |       setForm(settings);
+     |       ^^^^^^^ Avoid calling setState() directly within an effect
+  24 |     }
+  25 |   }, [settings]);
+  26 | [react-hooks/set-state-in-effect]
