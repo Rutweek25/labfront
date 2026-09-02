@@ -10,7 +10,10 @@ import { useAdminStore } from "../../store/adminStore";
 const COLORS = ["#0f766e", "#0284c7", "#ea580c", "#334155"];
 
 export const AdminDashboardPage = () => {
-  const { analytics, loading, error, fetchDashboard } = useAdminStore();
+  const analytics = useAdminStore((s) => s.analytics);
+  const loading = useAdminStore((s) => s.loading);
+  const error = useAdminStore((s) => s.error);
+  const fetchDashboard = useAdminStore((s) => s.fetchDashboard);
 
   useEffect(() => {
     fetchDashboard().catch((err: any) => {

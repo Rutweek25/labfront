@@ -8,21 +8,18 @@ import { useAdminStore } from "../../store/adminStore";
 const API_BASE = API_URL.replace(/\/api\/?$/, "");
 
 export const AdminReportsPage = () => {
-  const { reports, loading, error, fetchReports } = useAdminStore();
+  const reports = useAdminStore((s) => s.reports);
+  const loading = useAdminStore((s) => s.loading);
+  const error = useAdminStore((s) => s.error);
+  const fetchReports = useAdminStore((s) => s.fetchReports);
+
   const [status, setStatus] = useState<"ALL" | "UPLOADED" | "READY" | "REJECTED">("ALL");
 
-  const load = async (nextStatus: "ALL" | "UPLOADED" | "READY" | "REJECTED") => {
-    try {
-      await fetchReports(nextStatus);
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Failed to load reports");
-    }
-  };
-
   useEffect(() => {
-    load(status);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    fetchReports(status).catch((err: any) => {
+      toast.error(err?.response?.data?.message || "Failed to load reports");
+    });
+  }, [fetchReports, status]);
 
   return (
     <div className="space-y-6">
@@ -36,9 +33,7 @@ export const AdminReportsPage = () => {
             value={status}
             className="rounded-xl border border-slate-300 px-3 py-2"
             onChange={(e) => {
-              const next = e.target.value as "ALL" | "UPLOADED" | "READY" | "REJECTED";
-              setStatus(next);
-              load(next);
+              setStatus(e.target.value as "ALL" | "UPLOADED" | "READY" | "REJECTED");
             }}
           >
             <option value="ALL">All</option>

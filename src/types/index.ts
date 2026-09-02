@@ -1,7 +1,7 @@
 export type Role = "DOCTOR" | "TECHNICIAN" | "ADMIN";
 
 export interface User {
-  id: number;
+  id: string | number;
   name: string;
   email: string;
   role: Role;
@@ -10,7 +10,7 @@ export interface User {
 }
 
 export interface Patient {
-  id: number;
+  id: string | number;
   name: string;
   phone: string;
   age: number;
@@ -19,20 +19,20 @@ export interface Patient {
 }
 
 export interface TestItem {
-  id: number;
+  id: string | number;
   name: string;
   price: number;
 }
 
 export interface OrderTest {
-  testId: number;
+  testId: string | number;
   unitPrice: number;
   test: TestItem;
 }
 
 export interface Payment {
-  id: number;
-  orderId: number;
+  id: string | number;
+  orderId: string | number;
   amount: number;
   status: "PENDING" | "PAID";
   method: "CASH" | "ONLINE";
@@ -40,7 +40,7 @@ export interface Payment {
 }
 
 export interface Report {
-  id: number;
+  id: string | number;
   fileName: string;
   fileUrl: string;
   filePath: string;
@@ -50,9 +50,9 @@ export interface Report {
 }
 
 export interface Order {
-  id: number;
-  patientId: number;
-  doctorId: number;
+  id: string | number;
+  patientId: string | number;
+  doctorId: string | number;
   status: "PENDING" | "IN_PROGRESS" | "COMPLETED";
   sampleStatus: "PENDING" | "COLLECTED" | "RECEIVED" | "PROCESSING";
   createdAt: string;
@@ -65,31 +65,31 @@ export interface Order {
 }
 
 export interface NotificationItem {
-  id: number;
-  recipientId: number;
+  id: string | number;
+  recipientId: string | number;
   type: string;
   title: string;
   message: string;
   entityType?: string | null;
-  entityId?: number | null;
+  entityId?: string | number | null;
   metadata?: Record<string, unknown> | null;
   isRead: boolean;
   createdAt: string;
 }
 
 export interface AuditLogItem {
-  id: number;
-  actorId?: number | null;
+  id: string | number;
+  actorId?: string | number | null;
   actorRole?: Role | null;
   entityType: string;
-  entityId?: number | null;
+  entityId?: string | number | null;
   action: string;
   metadata?: Record<string, unknown> | null;
   createdAt: string;
 }
 
 export interface PaymentStatusRow {
-  orderId: number;
+  orderId: string | number;
   patientName: string;
   phone: string;
   tests: string[];
@@ -98,7 +98,7 @@ export interface PaymentStatusRow {
 }
 
 export interface LabPaymentRow {
-  orderId: number;
+  orderId: string | number;
   patientName: string;
   tests: string[];
   totalAmount: number;
@@ -137,8 +137,8 @@ export interface AdminDashboardAnalytics {
 }
 
 export interface AdminPaymentRow {
-  id: number;
-  orderId: number;
+  id: string | number;
+  orderId: string | number;
   patientName: string;
   tests: string[];
   amount: number;
@@ -148,8 +148,8 @@ export interface AdminPaymentRow {
 }
 
 export interface AdminReportRow {
-  id: number;
-  orderId: number;
+  id: string | number;
+  orderId: string | number;
   patientName: string;
   status: "UPLOADED" | "READY" | "REJECTED";
   fileName: string;

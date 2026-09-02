@@ -99,16 +99,14 @@ const getTotalAmount = (order: Order) => {
 
 export const DoctorDashboard = () => {
   const navigate = useNavigate();
-  const {
-    tests,
-    requests,
-    loading,
-    error,
-    fetchData,
-    deletePatient,
-    deleteOrder,
-    updateRequest
-  } = useDoctorRequestStore();
+  const tests = useDoctorRequestStore((s) => s.tests);
+  const requests = useDoctorRequestStore((s) => s.requests);
+  const loading = useDoctorRequestStore((s) => s.loading);
+  const error = useDoctorRequestStore((s) => s.error);
+  const fetchData = useDoctorRequestStore((s) => s.fetchData);
+  const deletePatient = useDoctorRequestStore((s) => s.deletePatient);
+  const deleteOrder = useDoctorRequestStore((s) => s.deleteOrder);
+  const updateRequest = useDoctorRequestStore((s) => s.updateRequest);
 
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<"ALL" | RequestStatus>("ALL");
@@ -117,12 +115,12 @@ export const DoctorDashboard = () => {
   const [isUpdatingRequest, setIsUpdatingRequest] = useState(false);
   const [editingRequest, setEditingRequest] = useState<Order | null>(null);
   const [viewingRequest, setViewingRequest] = useState<Order | null>(null);
-  const [editTests, setEditTests] = useState<number[]>([]);
-  const [editTestPrices, setEditTestPrices] = useState<Record<number, number>>({});
+  const [editTests, setEditTests] = useState<(string | number)[]>([]);
+  const [editTestPrices, setEditTestPrices] = useState<Record<string, number>>({});
   const [confirmAction, setConfirmAction] = useState<
     | null
-    | { type: "patient"; patientId: number; label: string }
-    | { type: "order"; orderId: number; label: string }
+    | { type: "patient"; patientId: string | number; label: string }
+    | { type: "order"; orderId: string | number; label: string }
   >(null);
 
   const filteredRequests = useMemo(() => {
@@ -147,7 +145,7 @@ export const DoctorDashboard = () => {
   }, [filteredRequests, page]);
 
   const totalEditSelected = useMemo(() => {
-    return editTests.reduce((sum, testId) => sum + Number(editTestPrices[testId] ?? 0), 0);
+    return editTests.reduce<number>((sum, testId) => sum + Number(editTestPrices[String(testId)] ?? 0), 0);
   }, [editTests, editTestPrices]);
 
   useEffect(() => {
@@ -192,8 +190,8 @@ export const DoctorDashboard = () => {
     setEditingRequest(order);
     setEditTests(order.orderTests.map((item) => item.testId));
     setEditTestPrices(
-      order.orderTests.reduce<Record<number, number>>((acc, item) => {
-        acc[item.testId] = Number(item.unitPrice);
+      order.orderTests.reduce<Record<string, number>>((acc, item) => {
+        acc[String(item.testId)] = Number(item.unitPrice);
         return acc;
       }, {})
     );
@@ -560,7 +558,7 @@ export const DoctorDashboard = () => {
                 <p className="mb-2 text-sm text-slate-600">Update Tests</p>
                 <div className="grid gap-2 md:grid-cols-2">
                   {tests.map((test: TestItem) => {
-                    const checked = editTests.includes(test.id);
+                    const checked = editTests.some((id) => String(id) === String(test.id));
                     return (
                       <label key={test.id} className="flex items-center gap-2 rounded-xl border border-slate-200 p-3 text-sm">
                         <input
@@ -568,12 +566,12 @@ export const DoctorDashboard = () => {
                           checked={checked}
                           onChange={() => {
                             setEditTests((prev) =>
-                              checked ? prev.filter((id) => id !== test.id) : [...prev, test.id]
+                              checked ? prev.filter((id) => String(id) !== String(test.id)) : [...prev, test.id]
                             );
                             if (!checked) {
                               setEditTestPrices((prev) => ({
                                 ...prev,
-                                [test.id]: prev[test.id] ?? Number(test.price)
+                                [String(test.id)]: prev[String(test.id)] ?? Number(test.price)
                               }));
                             }
                           }}
@@ -590,7 +588,7 @@ export const DoctorDashboard = () => {
                 <p className="mb-2 text-sm text-slate-600">Edit Test Pricing</p>
                 <div className="space-y-2">
                   {editTests.map((testId) => {
-                    const test = tests.find((item) => item.id === testId);
+                    const test = tests.find((item) => String(item.id) === String(testId));
                     if (!test) return null;
 
                     return (
@@ -602,12 +600,12 @@ export const DoctorDashboard = () => {
                             type="number"
                             min={0}
                             step="0.01"
-                            value={editTestPrices[testId] ?? Number(test.price)}
+                            value={editTestPrices[String(testId)] ?? Number(test.price)}
                             onChange={(e) => {
                               const value = Number(e.target.value);
                               setEditTestPrices((prev) => ({
                                 ...prev,
-                                [testId]: Number.isFinite(value) ? value : 0
+                                [String(testId)]: Number.isFinite(value) ? value : 0
                               }));
                             }}
                             className="w-28 rounded-lg border border-slate-300 px-2 py-1.5"

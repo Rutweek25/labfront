@@ -33,20 +33,18 @@ type PatientFormState = {
 export const ExistingPatientPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const {
-    patients,
-    selectedPatient,
-    tests,
-    loading,
-    setSelectedPatient,
-    fetchData,
-    createOrderForExisting,
-    updatePatient,
-    deletePatient
-  } = useDoctorRequestStore();
+  const patients = useDoctorRequestStore((s) => s.patients);
+  const selectedPatient = useDoctorRequestStore((s) => s.selectedPatient);
+  const tests = useDoctorRequestStore((s) => s.tests);
+  const loading = useDoctorRequestStore((s) => s.loading);
+  const setSelectedPatient = useDoctorRequestStore((s) => s.setSelectedPatient);
+  const fetchData = useDoctorRequestStore((s) => s.fetchData);
+  const createOrderForExisting = useDoctorRequestStore((s) => s.createOrderForExisting);
+  const updatePatient = useDoctorRequestStore((s) => s.updatePatient);
+  const deletePatient = useDoctorRequestStore((s) => s.deletePatient);
 
-  const [selectedPatientId, setSelectedPatientId] = useState<number | "">("");
-  const [selectedTests, setSelectedTests] = useState<number[]>([]);
+  const [selectedPatientId, setSelectedPatientId] = useState<string | number>("");
+  const [selectedTests, setSelectedTests] = useState<(string | number)[]>([]);
   const [isSubmittingRequest, setIsSubmittingRequest] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
@@ -71,16 +69,11 @@ export const ExistingPatientPage = () => {
       return;
     }
 
-    const patientId = Number(patientIdParam);
-    if (!Number.isFinite(patientId)) {
-      return;
-    }
-
-    setSelectedPatientId(patientId);
+    setSelectedPatientId(patientIdParam);
   }, [searchParams]);
 
   useEffect(() => {
-    const selected = patients.find((patient) => patient.id === selectedPatientId) ?? null;
+    const selected = patients.find((patient) => String(patient.id) === String(selectedPatientId)) ?? null;
     setSelectedPatient(selected);
   }, [selectedPatientId, patients, setSelectedPatient]);
 
@@ -105,8 +98,8 @@ export const ExistingPatientPage = () => {
   }, [selectedPatient]);
 
   const totalSelected = useMemo(() => {
-    return selectedTests.reduce((sum, testId) => {
-      const test = tests.find((item) => item.id === testId);
+    return selectedTests.reduce<number>((sum, testId) => {
+      const test = tests.find((item) => String(item.id) === String(testId));
       return sum + (test ? Number(test.price) : 0);
     }, 0);
   }, [selectedTests, tests]);
@@ -133,7 +126,7 @@ export const ExistingPatientPage = () => {
     try {
       setIsSubmittingRequest(true);
       await createOrderForExisting({
-        patientId: Number(selectedPatientId),
+        patientId: selectedPatientId,
         testIds: selectedTests
       });
 
@@ -262,7 +255,7 @@ export const ExistingPatientPage = () => {
                   return;
                 }
 
-                setSelectedPatientId(Number(value));
+                setSelectedPatientId(value);
               }}
               required
             >

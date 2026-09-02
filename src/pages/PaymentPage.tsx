@@ -5,16 +5,14 @@ import { Loader } from "../components/Loader";
 import { usePaymentStore } from "../store/paymentStore";
 
 export const PaymentPage = () => {
-  const {
-    rows,
-    loading,
-    error,
-    statusFilter,
-    search,
-    setStatusFilter,
-    setSearch,
-    fetchPayments
-  } = usePaymentStore();
+  const rows = usePaymentStore((s) => s.rows);
+  const loading = usePaymentStore((s) => s.loading);
+  const error = usePaymentStore((s) => s.error);
+  const statusFilter = usePaymentStore((s) => s.statusFilter);
+  const search = usePaymentStore((s) => s.search);
+  const setStatusFilter = usePaymentStore((s) => s.setStatusFilter);
+  const setSearch = usePaymentStore((s) => s.setSearch);
+  const fetchPayments = usePaymentStore((s) => s.fetchPayments);
 
   useEffect(() => {
     fetchPayments().catch((err: any) => {

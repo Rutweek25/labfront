@@ -6,7 +6,11 @@ import { PageHeader } from "../../components/PageHeader";
 import { useAdminStore } from "../../store/adminStore";
 
 export const AdminSettingsPage = () => {
-  const { settings, loading, error, fetchSettings, updateSettings } = useAdminStore();
+  const loading = useAdminStore((s) => s.loading);
+  const error = useAdminStore((s) => s.error);
+  const fetchSettings = useAdminStore((s) => s.fetchSettings);
+  const updateSettings = useAdminStore((s) => s.updateSettings);
+
   const [form, setForm] = useState({
     appName: "Lab Management System",
     currency: "Rs.",
@@ -15,15 +19,15 @@ export const AdminSettingsPage = () => {
   });
 
   useEffect(() => {
-    fetchSettings().catch((err: any) => toast.error(err?.response?.data?.message || "Failed to load settings"));
+    fetchSettings()
+      .then(() => {
+        const currentSettings = useAdminStore.getState().settings;
+        if (currentSettings) {
+          setForm(currentSettings);
+        }
+      })
+      .catch((err: any) => toast.error(err?.response?.data?.message || "Failed to load settings"));
   }, [fetchSettings]);
-
-  useEffect(() => {
-    if (settings) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setForm(settings);
-    }
-  }, [settings]);
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();

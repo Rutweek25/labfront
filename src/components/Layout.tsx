@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAuthStore } from "../store/authStore";
@@ -7,18 +7,18 @@ import { socket } from "../lib/socket";
 import type { NotificationItem } from "../types";
 
 type GlobalSearchResults = {
-  patients: Array<{ id: number; name: string; phone: string }>;
+  patients: Array<{ id: string | number; name: string; phone: string }>;
   orders: Array<{
-    id: number;
+    id: string | number;
     patient: { name: string; phone: string };
     orderTests: Array<{ test: { name: string } }>;
-    reports: Array<{ id: number; fileName: string; status: string }>;
+    reports: Array<{ id: string | number; fileName: string; status: string }>;
   }>;
   reports: Array<{
-    id: number;
+    id: string | number;
     fileName: string;
     status: string;
-    orderId: number;
+    orderId: string | number;
     order: { patient: { name: string; phone: string } };
   }>;
 };
@@ -66,7 +66,7 @@ export const Layout = () => {
     [results]
   );
 
-  const loadNotifications = async () => {
+  const loadNotifications = useCallback(async () => {
     if (!user) return;
     try {
       const { data } = await API.get("/notifications");
@@ -75,11 +75,11 @@ export const Layout = () => {
     } catch {
       // ignore notification panel errors
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     void loadNotifications();
-  }, [user?.id]);
+  }, [loadNotifications]);
 
   useEffect(() => {
     socket.connect();

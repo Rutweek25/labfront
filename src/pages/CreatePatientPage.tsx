@@ -7,13 +7,16 @@ import { useDoctorRequestStore } from "../store/doctorRequestStore";
 
 export const CreatePatientPage = () => {
   const navigate = useNavigate();
-  const { tests, loading, createPatientWithOrder, fetchData } = useDoctorRequestStore();
+  const tests = useDoctorRequestStore((s) => s.tests);
+  const loading = useDoctorRequestStore((s) => s.loading);
+  const createPatientWithOrder = useDoctorRequestStore((s) => s.createPatientWithOrder);
+  const fetchData = useDoctorRequestStore((s) => s.fetchData);
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("Male");
-  const [selectedTests, setSelectedTests] = useState<number[]>([]);
+  const [selectedTests, setSelectedTests] = useState<(string | number)[]>([]);
 
   useEffect(() => {
     fetchData().catch(() => {
@@ -22,8 +25,8 @@ export const CreatePatientPage = () => {
   }, [fetchData]);
 
   const totalSelected = useMemo(() => {
-    return selectedTests.reduce((sum, testId) => {
-      const test = tests.find((item) => item.id === testId);
+    return selectedTests.reduce<number>((sum, testId) => {
+      const test = tests.find((item) => String(item.id) === String(testId));
       return sum + (test ? Number(test.price) : 0);
     }, 0);
   }, [selectedTests, tests]);
@@ -122,7 +125,7 @@ export const CreatePatientPage = () => {
                       checked={checked}
                       onChange={() => {
                         setSelectedTests((prev) =>
-                          checked ? prev.filter((id) => id !== test.id) : [...prev, test.id]
+                          checked ? prev.filter((id) => String(id) !== String(test.id)) : [...prev, test.id]
                         );
                       }}
                     />

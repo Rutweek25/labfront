@@ -5,23 +5,20 @@ import { PageHeader } from "../../components/PageHeader";
 import { useAdminStore } from "../../store/adminStore";
 
 export const AdminPaymentsPage = () => {
-  const { payments, loading, error, fetchPayments } = useAdminStore();
+  const payments = useAdminStore((s) => s.payments);
+  const loading = useAdminStore((s) => s.loading);
+  const error = useAdminStore((s) => s.error);
+  const fetchPayments = useAdminStore((s) => s.fetchPayments);
+
   const [status, setStatus] = useState<"ALL" | "PAID" | "PENDING">("ALL");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
-  const load = async () => {
-    try {
-      await fetchPayments({ status, startDate: startDate || undefined, endDate: endDate || undefined });
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Failed to load payments");
-    }
-  };
-
   useEffect(() => {
-    load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    fetchPayments({ status, startDate: startDate || undefined, endDate: endDate || undefined }).catch((err: any) => {
+      toast.error(err?.response?.data?.message || "Failed to load payments");
+    });
+  }, [fetchPayments, status, startDate, endDate]);
 
   const totalRevenue = useMemo(() => payments.filter((p) => p.status === "PAID").reduce((sum, p) => sum + Number(p.amount), 0), [payments]);
   const pendingPayments = useMemo(() => payments.filter((p) => p.status === "PENDING").length, [payments]);
@@ -47,7 +44,7 @@ export const AdminPaymentsPage = () => {
           </select>
           <input type="date" className="rounded-xl border border-slate-300 px-3 py-2" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
           <input type="date" className="rounded-xl border border-slate-300 px-3 py-2" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
-          <button className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white" onClick={load}>Apply</button>
+          <button className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white" onClick={() => fetchPayments({ status, startDate: startDate || undefined, endDate: endDate || undefined })}>Apply</button>
         </div>
       </div>
 

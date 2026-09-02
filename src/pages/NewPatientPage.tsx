@@ -25,15 +25,13 @@ const BackArrowIcon = () => (
 
 export const NewPatientPage = () => {
   const navigate = useNavigate();
-  const {
-    tests,
-    loading,
-    fetchData,
-    createPatientWithOrder
-  } = useDoctorRequestStore();
+  const tests = useDoctorRequestStore((s) => s.tests);
+  const loading = useDoctorRequestStore((s) => s.loading);
+  const fetchData = useDoctorRequestStore((s) => s.fetchData);
+  const createPatientWithOrder = useDoctorRequestStore((s) => s.createPatientWithOrder);
 
   const [newPatientForm, setNewPatientForm] = useState({ name: "", phone: "", age: "", gender: "" });
-  const [newPatientTests, setNewPatientTests] = useState<number[]>([]);
+  const [newPatientTests, setNewPatientTests] = useState<(string | number)[]>([]);
   const [isSubmittingRequest, setIsSubmittingRequest] = useState(false);
 
   useEffect(() => {
@@ -43,8 +41,8 @@ export const NewPatientPage = () => {
   }, [fetchData]);
 
   const totalSelected = useMemo(() => {
-    return newPatientTests.reduce((sum, testId) => {
-      const test = tests.find((item) => item.id === testId);
+    return newPatientTests.reduce<number>((sum, testId) => {
+      const test = tests.find((item) => String(item.id) === String(testId));
       return sum + (test ? Number(test.price) : 0);
     }, 0);
   }, [newPatientTests, tests]);
@@ -187,7 +185,7 @@ export const NewPatientPage = () => {
             <label className="mb-2 block text-sm font-semibold text-slate-700">Select Lab Tests</label>
             <div className="grid gap-2 md:grid-cols-3">
               {tests.map((test: TestItem) => {
-                const checked = newPatientTests.includes(test.id);
+                const checked = newPatientTests.some((id) => String(id) === String(test.id));
                 return (
                   <label key={test.id} className="flex items-center gap-2 rounded-xl border border-slate-200 p-3 text-sm">
                     <input
@@ -195,7 +193,7 @@ export const NewPatientPage = () => {
                       checked={checked}
                       onChange={() => {
                         setNewPatientTests((prev) =>
-                          checked ? prev.filter((id) => id !== test.id) : [...prev, test.id]
+                          checked ? prev.filter((id) => String(id) !== String(test.id)) : [...prev, test.id]
                         );
                       }}
                     />

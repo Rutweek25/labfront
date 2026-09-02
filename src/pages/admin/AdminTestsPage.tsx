@@ -7,7 +7,13 @@ import { useAdminStore } from "../../store/adminStore";
 import type { TestItem } from "../../types";
 
 export const AdminTestsPage = () => {
-  const { tests, loading, error, fetchTests, createTest, updateTest, deleteTest } = useAdminStore();
+  const tests = useAdminStore((s) => s.tests);
+  const loading = useAdminStore((s) => s.loading);
+  const error = useAdminStore((s) => s.error);
+  const fetchTests = useAdminStore((s) => s.fetchTests);
+  const createTest = useAdminStore((s) => s.createTest);
+  const updateTest = useAdminStore((s) => s.updateTest);
+  const deleteTest = useAdminStore((s) => s.deleteTest);
   const [editing, setEditing] = useState<TestItem | null>(null);
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");

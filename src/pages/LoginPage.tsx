@@ -7,7 +7,12 @@ import type { Role } from "../types";
 
 export const LoginPage = () => {
   const navigate = useNavigate();
-  const { login, register, verifyRegistrationOtp, resendRegistrationOtp, loading, resetLoading } = useAuthStore();
+  const login = useAuthStore((s) => s.login);
+  const register = useAuthStore((s) => s.register);
+  const verifyRegistrationOtp = useAuthStore((s) => s.verifyRegistrationOtp);
+  const resendRegistrationOtp = useAuthStore((s) => s.resendRegistrationOtp);
+  const loading = useAuthStore((s) => s.loading);
+  const resetLoading = useAuthStore((s) => s.resetLoading);
 
   const [isRegister, setIsRegister] = useState(false);
   const [name, setName] = useState("");

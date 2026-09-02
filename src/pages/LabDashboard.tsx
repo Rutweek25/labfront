@@ -30,24 +30,22 @@ const EyeIcon = () => (
 );
 
 export const LabDashboard = () => {
-  const {
-    orders,
-    tests,
-    loading,
-    fetchLabData,
-    updateOrderTests,
-    deleteOrder,
-    updateOrderStatus,
-    updateOrderSampleStatus,
-    updatePaymentStatus,
-    uploadReport,
-    updateReportStatus
-  } = useLabTechnicianStore();
+  const orders = useLabTechnicianStore((s) => s.orders);
+  const tests = useLabTechnicianStore((s) => s.tests);
+  const loading = useLabTechnicianStore((s) => s.loading);
+  const fetchLabData = useLabTechnicianStore((s) => s.fetchLabData);
+  const updateOrderTests = useLabTechnicianStore((s) => s.updateOrderTests);
+  const deleteOrder = useLabTechnicianStore((s) => s.deleteOrder);
+  const updateOrderStatus = useLabTechnicianStore((s) => s.updateOrderStatus);
+  const updateOrderSampleStatus = useLabTechnicianStore((s) => s.updateOrderSampleStatus);
+  const updatePaymentStatus = useLabTechnicianStore((s) => s.updatePaymentStatus);
+  const uploadReport = useLabTechnicianStore((s) => s.uploadReport);
+  const updateReportStatus = useLabTechnicianStore((s) => s.updateReportStatus);
 
-  const [editingOrderId, setEditingOrderId] = useState<number | null>(null);
-  const [selectedTestIds, setSelectedTestIds] = useState<number[]>([]);
-  const [selectedTestPrices, setSelectedTestPrices] = useState<Record<number, number>>({});
-  const [uploadingOrderId, setUploadingOrderId] = useState<number | null>(null);
+  const [editingOrderId, setEditingOrderId] = useState<string | number | null>(null);
+  const [selectedTestIds, setSelectedTestIds] = useState<(string | number)[]>([]);
+  const [selectedTestPrices, setSelectedTestPrices] = useState<Record<string, number>>({});
+  const [uploadingOrderId, setUploadingOrderId] = useState<string | number | null>(null);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<"ALL" | "PENDING" | "IN_PROGRESS" | "COMPLETED">("ALL");
   const [page, setPage] = useState(1);
@@ -79,14 +77,14 @@ export const LabDashboard = () => {
     };
   }, [fetchLabData]);
 
-  const openEditTestsModal = (orderId: number) => {
-    const order = orders.find((item) => item.id === orderId);
+  const openEditTestsModal = (orderId: string | number) => {
+    const order = orders.find((item) => String(item.id) === String(orderId));
     if (!order) return;
     setEditingOrderId(orderId);
     setSelectedTestIds(order.orderTests.map((ot) => ot.testId));
     setSelectedTestPrices(
-      order.orderTests.reduce<Record<number, number>>((acc, ot) => {
-        acc[ot.testId] = Number(ot.unitPrice);
+      order.orderTests.reduce<Record<string, number>>((acc, ot) => {
+        acc[String(ot.testId)] = Number(ot.unitPrice);
         return acc;
       }, {})
     );
@@ -102,7 +100,7 @@ export const LabDashboard = () => {
     try {
       const testItems = selectedTestIds.map((testId) => ({
         testId,
-        unitPrice: Number(selectedTestPrices[testId] ?? 0)
+        unitPrice: Number(selectedTestPrices[String(testId)] ?? 0)
       }));
       await updateOrderTests(editingOrderId, testItems);
       toast.success("Order tests updated");
@@ -114,7 +112,7 @@ export const LabDashboard = () => {
     }
   };
 
-  const handleDeleteOrder = async (orderId: number) => {
+  const handleDeleteOrder = async (orderId: string | number) => {
     const confirmed = window.confirm("Delete this test request? This action cannot be undone.");
     if (!confirmed) return;
 
@@ -126,7 +124,7 @@ export const LabDashboard = () => {
     }
   };
 
-  const handleStatusUpdate = async (orderId: number, status: "PENDING" | "IN_PROGRESS" | "COMPLETED") => {
+  const handleStatusUpdate = async (orderId: string | number, status: "PENDING" | "IN_PROGRESS" | "COMPLETED") => {
     try {
       await updateOrderStatus(orderId, status);
       toast.success("Order status updated");
@@ -136,7 +134,7 @@ export const LabDashboard = () => {
   };
 
   const handleSampleStatusUpdate = async (
-    orderId: number,
+    orderId: string | number,
     sampleStatus: "PENDING" | "COLLECTED" | "RECEIVED" | "PROCESSING"
   ) => {
     try {
@@ -147,7 +145,7 @@ export const LabDashboard = () => {
     }
   };
 
-  const handlePaymentToggle = async (orderId: number, status: "PAID" | "PENDING") => {
+  const handlePaymentToggle = async (orderId: string | number, status: "PAID" | "PENDING") => {
     try {
       await updatePaymentStatus(orderId, status);
       toast.success("Payment status updated");
@@ -156,7 +154,7 @@ export const LabDashboard = () => {
     }
   };
 
-  const handleUploadReport = async (orderId: number, file: File | null) => {
+  const handleUploadReport = async (orderId: string | number, file: File | null) => {
     if (!file) return;
     setUploadingOrderId(orderId);
     try {
@@ -169,7 +167,7 @@ export const LabDashboard = () => {
     }
   };
 
-  const handleReportStatusUpdate = async (reportId: number, status: "UPLOADED" | "READY" | "REJECTED") => {
+  const handleReportStatusUpdate = async (reportId: string | number, status: "UPLOADED" | "READY" | "REJECTED") => {
     try {
       await updateReportStatus(reportId, status);
       toast.success("Report status updated");
@@ -520,7 +518,7 @@ export const LabDashboard = () => {
 
             <div className="mt-4 max-h-72 space-y-2 overflow-y-auto pr-1">
               {tests.map((test) => {
-                const checked = selectedTestIds.includes(test.id);
+                const checked = selectedTestIds.some((id) => String(id) === String(test.id));
                 return (
                   <label key={test.id} className="flex cursor-pointer items-center justify-between rounded-lg border border-slate-200 px-3 py-2">
                     <span className="text-sm text-slate-700">{test.name}</span>
@@ -532,10 +530,10 @@ export const LabDashboard = () => {
                           setSelectedTestIds((prev) => [...prev, test.id]);
                           setSelectedTestPrices((prev) => ({
                             ...prev,
-                            [test.id]: prev[test.id] ?? Number(test.price)
+                            [String(test.id)]: prev[String(test.id)] ?? Number(test.price)
                           }));
                         } else {
-                          setSelectedTestIds((prev) => prev.filter((id) => id !== test.id));
+                          setSelectedTestIds((prev) => prev.filter((id) => String(id) !== String(test.id)));
                         }
                       }}
                     />
@@ -546,7 +544,7 @@ export const LabDashboard = () => {
 
             <div className="mt-4 space-y-2">
               {selectedTestIds.map((testId) => {
-                const test = tests.find((item) => item.id === testId);
+                const test = tests.find((item) => String(item.id) === String(testId));
                 if (!test) return null;
 
                 return (
@@ -558,12 +556,12 @@ export const LabDashboard = () => {
                         type="number"
                         min={0}
                         step="0.01"
-                        value={selectedTestPrices[testId] ?? Number(test.price)}
+                        value={selectedTestPrices[String(testId)] ?? Number(test.price)}
                         onChange={(e) => {
                           const value = Number(e.target.value);
                           setSelectedTestPrices((prev) => ({
                             ...prev,
-                            [testId]: Number.isFinite(value) ? value : 0
+                            [String(testId)]: Number.isFinite(value) ? value : 0
                           }));
                         }}
                         className="w-28 rounded-md border border-slate-300 px-2 py-1 text-sm"

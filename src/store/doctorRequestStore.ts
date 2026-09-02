@@ -25,27 +25,27 @@ interface DoctorRequestState {
   error: string | null;
   setSelectedPatient: (patient: Patient | null) => void;
   fetchData: (search?: string) => Promise<void>;
-  createPatientWithOrder: (payload: { patient: CreatePatientPayload; testIds: number[] }) => Promise<void>;
-  createOrderForExisting: (payload: { patientId: number; testIds: number[] }) => Promise<void>;
-  updatePatient: (patientId: number, payload: UpdatePatientPayload) => Promise<void>;
-  deletePatient: (patientId: number) => Promise<void>;
-  deleteOrder: (orderId: number) => Promise<void>;
+  createPatientWithOrder: (payload: { patient: CreatePatientPayload; testIds: (string | number)[] }) => Promise<void>;
+  createOrderForExisting: (payload: { patientId: string | number; testIds: (string | number)[] }) => Promise<void>;
+  updatePatient: (patientId: string | number, payload: UpdatePatientPayload) => Promise<void>;
+  deletePatient: (patientId: string | number) => Promise<void>;
+  deleteOrder: (orderId: string | number) => Promise<void>;
   updateRequest: (
-    orderId: number,
-    payload: { testIds?: number[]; testItems?: Array<{ testId: number; unitPrice: number }> }
+    orderId: string | number,
+    payload: { testIds?: (string | number)[]; testItems?: Array<{ testId: string | number; unitPrice: number }> }
   ) => Promise<void>;
 }
 
 const normalizeOrder = (item: any): Order => ({
   ...item,
-  orderTests: item.orderTests.map((ot: any) => ({
+  orderTests: (item?.orderTests || []).map((ot: any) => ({
     ...ot,
-    unitPrice: Number(ot.unitPrice),
-    test: { ...ot.test, price: Number(ot.test.price) }
+    unitPrice: Number(ot?.unitPrice ?? 0),
+    test: ot?.test ? { ...ot.test, price: Number(ot.test.price ?? 0) } : { id: ot?.testId, name: "Unknown", price: 0 }
   })),
-  payments: item.payments.map((p: any) => ({
+  payments: (item?.payments || []).map((p: any) => ({
     ...p,
-    amount: Number(p.amount)
+    amount: Number(p?.amount ?? 0)
   }))
 });
 

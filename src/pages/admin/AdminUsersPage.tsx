@@ -7,7 +7,14 @@ import { useAdminStore } from "../../store/adminStore";
 import type { User } from "../../types";
 
 export const AdminUsersPage = () => {
-  const { users, loading, error, fetchUsers, createUser, updateUser, deleteUser, toggleUserStatus } = useAdminStore();
+  const users = useAdminStore((s) => s.users);
+  const loading = useAdminStore((s) => s.loading);
+  const error = useAdminStore((s) => s.error);
+  const fetchUsers = useAdminStore((s) => s.fetchUsers);
+  const createUser = useAdminStore((s) => s.createUser);
+  const updateUser = useAdminStore((s) => s.updateUser);
+  const deleteUser = useAdminStore((s) => s.deleteUser);
+  const toggleUserStatus = useAdminStore((s) => s.toggleUserStatus);
   const [form, setForm] = useState({ name: "", email: "", role: "DOCTOR" as "DOCTOR" | "TECHNICIAN" | "ADMIN", password: "" });
   const [editing, setEditing] = useState<User | null>(null);
 
