@@ -94,7 +94,7 @@ export const AdminDashboard = () => {
         <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
           <h2 className="mb-4 text-xl font-semibold text-slate-900">Role Distribution</h2>
           <div className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={100} minHeight={100}>
               <PieChart>
                 <Pie data={roleData} dataKey="value" nameKey="name" outerRadius={110} innerRadius={70} paddingAngle={3}>
                   {roleData.map((_entry, index) => (
