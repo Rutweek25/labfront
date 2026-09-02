@@ -15,9 +15,12 @@ interface AuthState {
     email: string;
     password: string;
     role: Role;
-  }) => Promise<{ email: string; otpPreview?: string }>;
+  }) => Promise<{ email: string }>;
   verifyRegistrationOtp: (email: string, otp: string) => Promise<void>;
-  resendRegistrationOtp: (email: string) => Promise<{ otpPreview?: string }>;
+  resendRegistrationOtp: (email: string) => Promise<void>;
+  forgotPassword: (email: string) => Promise<void>;
+  verifyResetOtp: (email: string, otp: string) => Promise<void>;
+  resetPassword: (payload: { email: string; otp: string; newPassword: string }) => Promise<void>;
   logout: () => void;
 }
 
@@ -48,7 +51,7 @@ export const useAuthStore = create<AuthState>()(
         set({ loading: true });
         try {
           const { data } = await API.post("/auth/register", payload);
-          return { email: data.email, otpPreview: data.otpPreview };
+          return { email: data.email };
         } finally {
           set({ loading: false });
         }
@@ -64,8 +67,31 @@ export const useAuthStore = create<AuthState>()(
       resendRegistrationOtp: async (email) => {
         set({ loading: true });
         try {
-          const { data } = await API.post("/auth/resend-otp", { email });
-          return { otpPreview: data.otpPreview };
+          await API.post("/auth/resend-otp", { email });
+        } finally {
+          set({ loading: false });
+        }
+      },
+      forgotPassword: async (email) => {
+        set({ loading: true });
+        try {
+          await API.post("/auth/forgot-password", { email });
+        } finally {
+          set({ loading: false });
+        }
+      },
+      verifyResetOtp: async (email, otp) => {
+        set({ loading: true });
+        try {
+          await API.post("/auth/verify-reset-otp", { email, otp });
+        } finally {
+          set({ loading: false });
+        }
+      },
+      resetPassword: async (payload) => {
+        set({ loading: true });
+        try {
+          await API.post("/auth/reset-password", payload);
         } finally {
           set({ loading: false });
         }

@@ -87,7 +87,7 @@ export const AdminDashboardPage = () => {
         <article className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
           <h3 className="mb-3 text-lg font-semibold">Orders Per Day</h3>
           <div className="h-72">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={100} minHeight={100}>
               <BarChart data={analytics?.charts.ordersPerDay || []}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" />
@@ -103,7 +103,7 @@ export const AdminDashboardPage = () => {
       <section className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
         <h3 className="mb-3 text-lg font-semibold">Payment Status Breakdown</h3>
         <div className="h-80">
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height="100%" minWidth={100} minHeight={100}>
             <PieChart>
               <Pie data={analytics?.charts.paymentStatusBreakdown || []} dataKey="value" nameKey="name" outerRadius={120}>
                 {(analytics?.charts.paymentStatusBreakdown || []).map((_, index) => (
@@ -121,7 +121,7 @@ export const AdminDashboardPage = () => {
         <article className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
           <h3 className="mb-3 text-lg font-semibold">Revenue by Test</h3>
           <div className="h-72">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={100} minHeight={100}>
               <BarChart data={analytics?.charts.revenueByTest || []}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" hide />
@@ -136,7 +136,7 @@ export const AdminDashboardPage = () => {
         <article className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
           <h3 className="mb-3 text-lg font-semibold">Top Tests</h3>
           <div className="h-72">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={100} minHeight={100}>
               <BarChart data={analytics?.charts.topTests || []}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" hide />
@@ -151,7 +151,7 @@ export const AdminDashboardPage = () => {
         <article className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
           <h3 className="mb-3 text-lg font-semibold">Doctor Performance</h3>
           <div className="h-72">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={100} minHeight={100}>
               <BarChart data={analytics?.charts.doctorPerformance || []}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" hide />

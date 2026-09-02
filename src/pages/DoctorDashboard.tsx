@@ -46,10 +46,11 @@ const getRequestStatus = (order: Order): RequestStatus => {
 };
 
 const toneClass = (tone: StatusTone) => {
-  if (tone === "completed") return "border-emerald-200 bg-emerald-50 text-emerald-700";
-  if (tone === "in-progress") return "border-blue-200 bg-blue-50 text-blue-700";
-  if (tone === "issue") return "border-rose-200 bg-rose-50 text-rose-700";
-  return "border-amber-200 bg-amber-50 text-amber-700";
+  const base = "inline-flex items-center gap-1 shrink-0 whitespace-nowrap max-w-fit rounded-full px-2.5 py-1 text-xs font-semibold border";
+  if (tone === "completed") return `${base} border-emerald-200 bg-emerald-50 text-emerald-700`;
+  if (tone === "in-progress") return `${base} border-blue-200 bg-blue-50 text-blue-700`;
+  if (tone === "issue") return `${base} border-rose-200 bg-rose-50 text-rose-700`;
+  return `${base} border-amber-200 bg-amber-50 text-amber-700`;
 };
 
 const requestStatusTone = (status: RequestStatus): StatusTone => {

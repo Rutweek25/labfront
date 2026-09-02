@@ -497,7 +497,7 @@ export const LabDashboard = () => {
         <article className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
           <h2 className="mb-3 text-xl font-semibold text-slate-900">Pipeline Flow</h2>
           <div className="h-64 min-w-0 w-full">
-            <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
+            <ResponsiveContainer width="100%" height="100%" minWidth={100} minHeight={100}>
               <BarChart data={statusFlowData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
