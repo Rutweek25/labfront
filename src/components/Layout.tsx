@@ -238,11 +238,11 @@ export const Layout = () => {
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_20%_20%,#fee2e2,transparent_35%),radial-gradient(circle_at_80%_0%,#dbeafe,transparent_30%),#f8fafc] text-slate-800">
-      <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/85 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
-          <Link to="/" className="flex items-center gap-3 text-xl font-semibold tracking-tight" onClick={() => setIsMobileMenuOpen(false)}>
-            <span className="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-slate-900 text-sm text-white shadow-lg shadow-slate-300">LM</span>
-            <span>Lab Management</span>
+      <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3">
+          <Link to="/" className="flex items-center gap-2 sm:gap-3 text-base sm:text-xl font-semibold tracking-tight min-w-0 shrink" onClick={() => setIsMobileMenuOpen(false)}>
+            <span className="inline-flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-slate-900 text-xs sm:text-sm font-semibold text-white shadow-md">LM</span>
+            <span className="truncate">Lab Management</span>
           </Link>
 
           {/* Desktop Navigation Links */}
@@ -354,7 +354,7 @@ export const Layout = () => {
           </nav>
 
           {/* Top Bar Right Actions (Desktop & Mobile) */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             <div className="hidden sm:inline-flex">
               <LiveDot live={socketLive} />
             </div>
