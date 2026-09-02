@@ -7,7 +7,7 @@ interface LabTechnicianState {
   tests: TestItem[];
   loading: boolean;
   error: string | null;
-  fetchLabData: () => Promise<void>;
+  fetchLabData: (options?: { silent?: boolean }) => Promise<void>;
   updateOrderTests: (orderId: string | number, testItems: Array<{ testId: string | number; unitPrice: number }>) => Promise<void>;
   deleteOrder: (orderId: string | number) => Promise<void>;
   updateOrderStatus: (orderId: string | number, status: "PENDING" | "IN_PROGRESS" | "COMPLETED") => Promise<void>;
@@ -62,8 +62,10 @@ export const useLabTechnicianStore = create<LabTechnicianState>((set) => ({
   loading: false,
   error: null,
 
-  fetchLabData: async () => {
-    set({ loading: true, error: null });
+  fetchLabData: async (options?: { silent?: boolean }) => {
+    if (!options?.silent) {
+      set({ loading: true, error: null });
+    }
     try {
       const [ordersRes, testsRes] = await Promise.all([
         API.get("/orders", { params: { page: 1, pageSize: 100 } }),

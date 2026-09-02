@@ -24,7 +24,7 @@ interface DoctorRequestState {
   loading: boolean;
   error: string | null;
   setSelectedPatient: (patient: Patient | null) => void;
-  fetchData: (search?: string) => Promise<void>;
+  fetchData: (search?: string, options?: { silent?: boolean }) => Promise<void>;
   createPatientWithOrder: (payload: { patient: CreatePatientPayload; testIds: (string | number)[] }) => Promise<void>;
   createOrderForExisting: (payload: { patientId: string | number; testIds: (string | number)[] }) => Promise<void>;
   updatePatient: (patientId: string | number, payload: UpdatePatientPayload) => Promise<void>;
@@ -58,8 +58,10 @@ export const useDoctorRequestStore = create<DoctorRequestState>((set) => ({
   error: null,
   setSelectedPatient: (patient) => set({ selectedPatient: patient }),
 
-  fetchData: async (search = "") => {
-    set({ loading: true, error: null });
+  fetchData: async (search = "", options?: { silent?: boolean }) => {
+    if (!options?.silent) {
+      set({ loading: true, error: null });
+    }
     try {
       const [patientsRes, testsRes, ordersRes] = await Promise.all([
         API.get("/patients", { params: { search, page: 1, pageSize: 100 } }),

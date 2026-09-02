@@ -59,7 +59,7 @@ export const LabDashboard = () => {
 
   useEffect(() => {
     const refresh = () => {
-      fetchLabData().catch(() => undefined);
+      fetchLabData({ silent: true }).catch(() => undefined);
     };
 
     socket.on("order:new", refresh);

@@ -156,7 +156,7 @@ export const DoctorDashboard = () => {
 
   useEffect(() => {
     const syncDashboard = () => {
-      fetchData(search).catch(() => {
+      fetchData(search, { silent: true }).catch(() => {
         // no-op
       });
     };
@@ -175,6 +175,15 @@ export const DoctorDashboard = () => {
       socket.off("notification:new", syncDashboard);
     };
   }, [fetchData, search]);
+
+  useEffect(() => {
+    if (viewingRequest) {
+      const updated = requests.find((r) => String(r.id) === String(viewingRequest.id));
+      if (updated) {
+        setViewingRequest(updated);
+      }
+    }
+  }, [requests]);
 
   useEffect(() => {
     setPage(1);
