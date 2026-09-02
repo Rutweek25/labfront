@@ -245,6 +245,7 @@ export const Layout = () => {
             <span>Lab Management</span>
           </Link>
 
+          {/* Desktop Navigation Links */}
           <nav className="hidden items-center gap-2 text-sm md:flex">
             {(user?.role === "DOCTOR" || user?.role === "ADMIN") && (
               <NavLink className="rounded-full px-3 py-1.5 hover:bg-slate-100" to="/doctor-dashboard">
@@ -350,98 +351,148 @@ export const Layout = () => {
                 </div>
               )}
             </div>
+          </nav>
 
-            <div className="hidden items-center gap-2 lg:flex">
+          {/* Top Bar Right Actions (Desktop & Mobile) */}
+          <div className="flex items-center gap-2">
+            <div className="hidden sm:inline-flex">
               <LiveDot live={socketLive} />
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setNotificationsOpen((value) => !value);
-                    setMenuOpen(false);
-                  }}
-                  className="relative inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-slate-300"
-                >
-                  <BellIcon />
-                  {unreadCount > 0 && <span className="absolute right-1 top-1 h-2.5 w-2.5 rounded-full bg-rose-500" />}
-                </button>
-                {notificationsOpen && (
-                  <div className="absolute right-0 z-40 mt-2 w-96 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl">
-                    <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
-                      <div>
-                        <p className="text-sm font-semibold text-slate-900">Notifications</p>
-                        <p className="text-xs text-slate-500">{unreadCount} unread</p>
-                      </div>
-                      <button type="button" onClick={markAllNotificationsRead} className="rounded-full border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50">
-                        Mark all read
-                      </button>
-                    </div>
-                    <div className="max-h-80 overflow-auto p-2">
-                      {!notifications.length && <p className="px-3 py-6 text-center text-sm text-slate-500">No notifications yet.</p>}
-                      {notifications.map((notification) => (
-                        <button
-                          key={notification.id}
-                          type="button"
-                          onClick={async () => {
-                            if (!notification.isRead) {
-                              try {
-                                await API.patch(`/notifications/${notification.id}/read`);
-                                setNotifications((current) => current.map((item) => (item.id === notification.id ? { ...item, isRead: true } : item)));
-                                setUnreadCount((count) => Math.max(count - 1, 0));
-                              } catch {
-                                toast.error("Unable to open notification");
-                              }
-                            }
-                          }}
-                          className={`w-full rounded-2xl px-3 py-3 text-left transition hover:bg-slate-50 ${notification.isRead ? "opacity-70" : "bg-slate-50/70"}`}
-                        >
-                          <p className="text-sm font-semibold text-slate-900">{notification.title}</p>
-                          <p className="mt-1 text-sm text-slate-600">{notification.message}</p>
-                          <p className="mt-2 text-xs text-slate-400">{new Date(notification.createdAt).toLocaleString()}</p>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div className="relative hidden lg:block">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMenuOpen((value) => !value);
-                    setNotificationsOpen(false);
-                  }}
-                  className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-2 shadow-sm transition hover:border-slate-300"
-                >
-                  <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900 text-sm font-semibold text-white">{user?.name?.slice(0, 1) ?? "U"}</span>
-                  <div className="text-left">
-                    <p className="text-sm font-semibold text-slate-900">{user?.name}</p>
-                    <p className="text-xs text-slate-500">{user?.role}</p>
-                  </div>
-                </button>
-                {menuOpen && (
-                  <div className="absolute right-0 z-40 mt-2 w-56 rounded-3xl border border-slate-200 bg-white p-2 shadow-2xl">
-                    <p className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate-400">Account</p>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        logout();
-                        navigate("/login");
-                      }}
-                      className="w-full rounded-2xl px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50"
-                    >
-                      Logout
-                    </button>
-                  </div>
-                )}
-              </div>
             </div>
 
+            {/* Notifications Dropdown */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => {
+                  setNotificationsOpen((value) => !value);
+                  setMenuOpen(false);
+                }}
+                className="relative inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-slate-300"
+                aria-label="Notifications"
+              >
+                <BellIcon />
+                {unreadCount > 0 && <span className="absolute right-1 top-1 h-2.5 w-2.5 rounded-full bg-rose-500" />}
+              </button>
+              {notificationsOpen && (
+                <div className="absolute right-0 z-40 mt-2 w-[calc(100vw-2rem)] max-w-sm sm:w-96 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl">
+                  <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
+                    <div>
+                      <p className="text-sm font-semibold text-slate-900">Notifications</p>
+                      <p className="text-xs text-slate-500">{unreadCount} unread</p>
+                    </div>
+                    <button type="button" onClick={markAllNotificationsRead} className="rounded-full border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50">
+                      Mark all read
+                    </button>
+                  </div>
+                  <div className="max-h-80 overflow-auto p-2">
+                    {!notifications.length && <p className="px-3 py-6 text-center text-sm text-slate-500">No notifications yet.</p>}
+                    {notifications.map((notification) => (
+                      <button
+                        key={notification.id}
+                        type="button"
+                        onClick={async () => {
+                          if (!notification.isRead) {
+                            try {
+                              await API.patch(`/notifications/${notification.id}/read`);
+                              setNotifications((current) => current.map((item) => (item.id === notification.id ? { ...item, isRead: true } : item)));
+                              setUnreadCount((count) => Math.max(count - 1, 0));
+                            } catch {
+                              toast.error("Unable to open notification");
+                            }
+                          }
+                        }}
+                        className={`w-full rounded-2xl px-3 py-3 text-left transition hover:bg-slate-50 ${notification.isRead ? "opacity-70" : "bg-slate-50/70"}`}
+                      >
+                        <p className="text-sm font-semibold text-slate-900">{notification.title}</p>
+                        <p className="mt-1 text-sm text-slate-600">{notification.message}</p>
+                        <p className="mt-2 text-xs text-slate-400">{new Date(notification.createdAt).toLocaleString()}</p>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Desktop Profile Dropdown */}
+            <div className="relative hidden md:block">
+              <button
+                type="button"
+                onClick={() => {
+                  setMenuOpen((value) => !value);
+                  setNotificationsOpen(false);
+                }}
+                className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-2 shadow-sm transition hover:border-slate-300"
+              >
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900 text-sm font-semibold text-white">{user?.name?.slice(0, 1) ?? "U"}</span>
+                <div className="text-left">
+                  <p className="text-sm font-semibold text-slate-900">{user?.name}</p>
+                  <p className="text-xs text-slate-500">{user?.role}</p>
+                </div>
+              </button>
+              {menuOpen && (
+                <div className="absolute right-0 z-40 mt-2 w-56 rounded-3xl border border-slate-200 bg-white p-2 shadow-2xl">
+                  <p className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate-400">Account</p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMenuOpen(false);
+                      logout();
+                      navigate("/login");
+                    }}
+                    className="w-full rounded-2xl px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Mobile Profile Dropdown (Top Right Header) */}
+            <div className="relative md:hidden">
+              <button
+                type="button"
+                onClick={() => {
+                  setMenuOpen((value) => !value);
+                  setNotificationsOpen(false);
+                }}
+                className="flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:border-slate-300"
+                aria-label="User profile"
+              >
+                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-900 text-xs font-semibold text-white">
+                  {user?.name?.slice(0, 1) ?? "U"}
+                </span>
+              </button>
+              {menuOpen && (
+                <div className="absolute right-0 z-40 mt-2 w-60 rounded-3xl border border-slate-200 bg-white p-3 shadow-2xl">
+                  <div className="border-b border-slate-100 pb-2 mb-2">
+                    <p className="text-sm font-semibold text-slate-900 truncate">{user?.name}</p>
+                    <p className="text-xs font-medium text-slate-500">{user?.role}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMenuOpen(false);
+                      logout();
+                      navigate("/login");
+                    }}
+                    className="w-full rounded-2xl bg-rose-50 px-3 py-2.5 text-left text-sm font-semibold text-rose-600 hover:bg-rose-100 transition"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Mobile Hamburger Menu Button */}
             <button
               type="button"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              onClick={() => {
+                setIsMobileMenuOpen(!isMobileMenuOpen);
+                setMenuOpen(false);
+                setNotificationsOpen(false);
+              }}
               className="rounded-xl border border-slate-200 bg-white p-2 shadow-sm hover:bg-slate-50 md:hidden"
+              aria-label="Toggle navigation"
             >
               <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {isMobileMenuOpen ? (
@@ -451,7 +502,7 @@ export const Layout = () => {
                 )}
               </svg>
             </button>
-          </nav>
+          </div>
         </div>
 
         {/* Mobile Nav Collapse */}
